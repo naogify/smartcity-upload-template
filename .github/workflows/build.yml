@@ -32,17 +32,11 @@ jobs:
       #   run: |
       #       echo "下記のURLでプレビューを開けます"
       #       echo https://geolonia.github.io/smartcity-smartmap/#/?endpointUrl=${{ steps.create-smartcity-tile.outputs.pmtiles_url }}
-
+      
       - name: Update repository description
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DESCRIPTION="新しいリポジトリの説明"
-          REPO="${{ github.repository }}"
-          TOKEN="${{ secrets.GITHUB_TOKEN }}"
-
           curl -X PATCH \
-          -H "Authorization: token $TOKEN" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/$REPO \
-          -d "{\"description\": \"$DESCRIPTION\"}"
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }} \
+            -d '{"description":"New repository description"}'
