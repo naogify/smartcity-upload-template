@@ -16,21 +16,35 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: 'arn:aws:iam::910320664791:role/SmartcityStandaloneInfraA-SmartcityStandaloneInfraA-MlMTQc5HZbN7'
-          aws-region: ap-northeast-1
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: 'arn:aws:iam::910320664791:role/SmartcityStandaloneInfraA-SmartcityStandaloneInfraA-MlMTQc5HZbN7'
+      #     aws-region: ap-northeast-1
 
-      - name: 'Create SmartCity Vector Tile'
-        id: create-smartcity-tile
-        uses: geolonia/smartcity-data-upload-action@main
-        with:
-          INPUT_DIR: './data'
-          NAME: 'SmartCity テンプレート'
-          MUNICIPALITY_CODE: '37201'
+      # - name: 'Create SmartCity Vector Tile'
+      #   id: create-smartcity-tile
+      #   uses: geolonia/smartcity-data-upload-action@main
+      #   with:
+      #     INPUT_DIR: './data'
+      #     NAME: 'SmartCity テンプレート'
+      #     MUNICIPALITY_CODE: '37201'
 
-      - name: Smartmap
+      # - name: Smartmap
+      #   run: |
+      #       echo "下記のURLでプレビューを開けます"
+      #       echo https://geolonia.github.io/smartcity-smartmap/#/?endpointUrl=${{ steps.create-smartcity-tile.outputs.pmtiles_url }}
+
+      - name: Update repository description
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            echo "下記のURLでプレビューを開けます"
-            echo https://geolonia.github.io/smartcity-smartmap/#/?endpointUrl=${{ steps.create-smartcity-tile.outputs.pmtiles_url }}
+          DESCRIPTION="新しいリポジトリの説明"
+          REPO="${{ github.repository }}"
+          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+
+          curl -X PATCH \
+          -H "Authorization: token $TOKEN" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/$REPO \
+          -d "{\"description\": \"$DESCRIPTION\"}"
